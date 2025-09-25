@@ -19,7 +19,6 @@ CREATE TABLE dw.fat_pedidos (
   qtd_volumes       INTEGER CHECK (qtd_volumes >= 0),
   qtd_itens         INTEGER CHECK (qtd_itens >= 0),
   peso              NUMERIC(12,3) CHECK (peso >= 0),
-  lead_time         INTEGER CHECK (lead_time >= 0),
 
   -- localização e CEP (ver nota abaixo)
   cep_num           INTEGER,                               -- para comparações por faixa
@@ -54,7 +53,8 @@ CREATE TABLE dw.fat_pedidos (
   etiquetas         JSONB,                                 -- era TEXT
   cpf_destinatario  CHAR(11),
   agrupador         TEXT,
-  arquivo_origem    TEXT
+  arquivo_origem    TEXT,
+  lead_time         TEXT
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS ux_fat_pedidos_chave_nfe ON dw.fat_pedidos(chave_nfe);
