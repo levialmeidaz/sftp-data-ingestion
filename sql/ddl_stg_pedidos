@@ -1,5 +1,3 @@
-CREATE SCHEMA IF NOT EXISTS stagging;
-
 CREATE TABLE stagging.stg_pedidos (
     id VARCHAR(255),
     data_insercao VARCHAR(255),
