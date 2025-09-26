@@ -108,10 +108,39 @@ WITH src AS (
     NULLIF(TRIM(s.data_ultima_ocr),'')                AS data_ultima_ocr_raw,
 
     /* ---- numéricos ---- */
+    -- valor_nfe: cobre BR, US, ponto decimal, vírgula decimal, só milhares, inteiro
     CASE
-      WHEN s.valor_nfe IS NULL OR btrim(s.valor_nfe)='' THEN NULL
-      ELSE CAST(replace(replace(regexp_replace(s.valor_nfe,'[^0-9,.-]','','g'),'.',''),',','.') AS numeric(15,2))
+      WHEN s.valor_nfe IS NULL OR btrim(s.valor_nfe) = '' THEN NULL
+
+      WHEN btrim(s.valor_nfe) ~ '^[+-]?\d{1,3}(\.\d{3})+,\d{1,2}$'
+        THEN replace(replace(btrim(s.valor_nfe),'.',''),',','.')::numeric(15,2)
+
+      WHEN btrim(s.valor_nfe) ~ '^[+-]?\d{1,3}(,\d{3})+\.\d{1,2}$'
+        THEN replace(btrim(s.valor_nfe),',','')::numeric(15,2)
+
+      WHEN btrim(s.valor_nfe) ~ '^[+-]?\d+,\d{1,2}$'
+        THEN replace(btrim(s.valor_nfe),',','.')::numeric(15,2)
+
+      WHEN btrim(s.valor_nfe) ~ '^[+-]?\d+\.\d{1,2}$'
+        THEN btrim(s.valor_nfe)::numeric(15,2)
+
+      WHEN btrim(s.valor_nfe) ~ '^[+-]?\d{1,3}(\.\d{3})+$'
+        THEN replace(btrim(s.valor_nfe),'.','')::numeric(15,2)
+
+      WHEN btrim(s.valor_nfe) ~ '^[+-]?\d{1,3}(,\d{3})+$'
+        THEN replace(btrim(s.valor_nfe),',','')::numeric(15,2)
+
+      WHEN btrim(s.valor_nfe) ~ '^[+-]?\d+$'
+        THEN btrim(s.valor_nfe)::numeric(15,2)
+
+      ELSE CAST(
+             replace(
+               replace(regexp_replace(s.valor_nfe,'[^0-9,.-]','','g'),'.',''),
+               ',', '.'
+             ) AS numeric(15,2)
+           )
     END                                               AS valor_nfe,
+
     NULLIF(regexp_replace(s.qtd_volumes,'\D','','g'),'')::int AS qtd_volumes,
     CASE
       WHEN s.peso IS NULL OR btrim(s.peso)='' THEN NULL
