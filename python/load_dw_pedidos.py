@@ -26,65 +26,41 @@ WITH src AS (
     CASE WHEN length(regexp_replace(s.chave_nfe,'\D','','g'))=44
          THEN regexp_replace(s.chave_nfe,'\D','','g')  ELSE NULL END AS chave_nfe,
 
-    /* ---- DATE: aceita DD/MM/YYYY [HH:MM:SS], DD-MM-YYYY, YYYY-MM-DD, YYYYMMDD ---- */
-    -- data_nfe
+    /* ---- DATE ---- */
     CASE
       WHEN btrim(s.data_nfe) IN ('', '00/00/0000', '00/00/0000 00:00:00', '0000-00-00') THEN NULL
       WHEN btrim(s.data_nfe) ~ '^\d{2}/\d{2}/\d{4}( \d{2}:\d{2}:\d{2})?$'
-        THEN to_timestamp(
-               CASE WHEN position(' ' in btrim(s.data_nfe))>0
-                    THEN btrim(s.data_nfe)
-                    ELSE btrim(s.data_nfe)||' 00:00:00' END,
-               'DD/MM/YYYY HH24:MI:SS'
-             )::date
-      WHEN btrim(s.data_nfe) ~ '^\d{2}-\d{2}-\d{4}$'
-        THEN to_date(s.data_nfe,'DD-MM-YYYY')
+        THEN to_timestamp(CASE WHEN position(' ' in btrim(s.data_nfe))>0 THEN btrim(s.data_nfe) ELSE btrim(s.data_nfe)||' 00:00:00' END,'DD/MM/YYYY HH24:MI:SS')::date
+      WHEN btrim(s.data_nfe) ~ '^\d{2}-\d{2}-\d{4}$' THEN to_date(s.data_nfe,'DD-MM-YYYY')
       WHEN btrim(s.data_nfe) ~ '^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2})?)?$'
         THEN to_timestamp(replace(btrim(s.data_nfe),'T',' '),'YYYY-MM-DD HH24:MI:SS')::date
-      WHEN btrim(s.data_nfe) ~ '^\d{8}$'
-        THEN to_date(s.data_nfe,'YYYYMMDD')
+      WHEN btrim(s.data_nfe) ~ '^\d{8}$' THEN to_date(s.data_nfe,'YYYYMMDD')
       ELSE NULL
     END AS data_nfe,
 
-    -- data_prev_entrega
     CASE
       WHEN btrim(s.data_prev_entrega) IN ('', '00/00/0000', '00/00/0000 00:00:00', '0000-00-00') THEN NULL
       WHEN btrim(s.data_prev_entrega) ~ '^\d{2}/\d{2}/\d{4}( \d{2}:\d{2}:\d{2})?$'
-        THEN to_timestamp(
-               CASE WHEN position(' ' in btrim(s.data_prev_entrega))>0
-                    THEN btrim(s.data_prev_entrega)
-                    ELSE btrim(s.data_prev_entrega)||' 00:00:00' END,
-               'DD/MM/YYYY HH24:MI:SS'
-             )::date
-      WHEN btrim(s.data_prev_entrega) ~ '^\d{2}-\d{2}-\d{4}$'
-        THEN to_date(s.data_prev_entrega,'DD-MM-YYYY')
+        THEN to_timestamp(CASE WHEN position(' ' in btrim(s.data_prev_entrega))>0 THEN btrim(s.data_prev_entrega) ELSE btrim(s.data_prev_entrega)||' 00:00:00' END,'DD/MM/YYYY HH24:MI:SS')::date
+      WHEN btrim(s.data_prev_entrega) ~ '^\d{2}-\d{2}-\d{4}$' THEN to_date(s.data_prev_entrega,'DD-MM-YYYY')
       WHEN btrim(s.data_prev_entrega) ~ '^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2})?)?$'
         THEN to_timestamp(replace(btrim(s.data_prev_entrega),'T',' '),'YYYY-MM-DD HH24:MI:SS')::date
-      WHEN btrim(s.data_prev_entrega) ~ '^\d{8}$'
-        THEN to_date(s.data_prev_entrega,'YYYYMMDD')
+      WHEN btrim(s.data_prev_entrega) ~ '^\d{8}$' THEN to_date(s.data_prev_entrega,'YYYYMMDD')
       ELSE NULL
     END AS data_prev_entrega,
 
-    -- data_prev_entrega_original
     CASE
       WHEN btrim(s.data_prev_entrega_original) IN ('', '00/00/0000', '00/00/0000 00:00:00', '0000-00-00') THEN NULL
       WHEN btrim(s.data_prev_entrega_original) ~ '^\d{2}/\d{2}/\d{4}( \d{2}:\d{2}:\d{2})?$'
-        THEN to_timestamp(
-               CASE WHEN position(' ' in btrim(s.data_prev_entrega_original))>0
-                    THEN btrim(s.data_prev_entrega_original)
-                    ELSE btrim(s.data_prev_entrega_original)||' 00:00:00' END,
-               'DD/MM/YYYY HH24:MI:SS'
-             )::date
-      WHEN btrim(s.data_prev_entrega_original) ~ '^\d{2}-\d{2}-\d{4}$'
-        THEN to_date(s.data_prev_entrega_original,'DD-MM-YYYY')
+        THEN to_timestamp(CASE WHEN position(' ' in btrim(s.data_prev_entrega_original))>0 THEN btrim(s.data_prev_entrega_original) ELSE btrim(s.data_prev_entrega_original)||' 00:00:00' END,'DD/MM/YYYY HH24:MI:SS')::date
+      WHEN btrim(s.data_prev_entrega_original) ~ '^\d{2}-\d{2}-\d{4}$' THEN to_date(s.data_prev_entrega_original,'DD-MM-YYYY')
       WHEN btrim(s.data_prev_entrega_original) ~ '^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2})?)?$'
         THEN to_timestamp(replace(btrim(s.data_prev_entrega_original),'T',' '),'YYYY-MM-DD HH24:MI:SS')::date
-      WHEN btrim(s.data_prev_entrega_original) ~ '^\d{8}$'
-        THEN to_date(s.data_prev_entrega_original,'YYYYMMDD')
+      WHEN btrim(s.data_prev_entrega_original) ~ '^\d{8}$' THEN to_date(s.data_prev_entrega_original,'YYYYMMDD')
       ELSE NULL
     END AS data_prev_entrega_original,
 
-    /* ---- TIMESTAMP: aceita DD/MM/YYYY HH:MM:SS e ISO ---- */
+    /* ---- TIMESTAMP ---- */
     CASE
       WHEN btrim(s.data_ultima_ocr) ~ '^\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}$'
         THEN to_timestamp(btrim(s.data_ultima_ocr),'DD/MM/YYYY HH24:MI:SS')
@@ -107,48 +83,51 @@ WITH src AS (
 
     NULLIF(TRIM(s.data_ultima_ocr),'')                AS data_ultima_ocr_raw,
 
-    /* ---- numéricos ---- */
-    -- valor_nfe: cobre BR, US, ponto decimal, vírgula decimal, só milhares, inteiro
+    /* ---- NUMÉRICOS ---- */
+    -- valor_nfe
     CASE
       WHEN s.valor_nfe IS NULL OR btrim(s.valor_nfe) = '' THEN NULL
-
       WHEN btrim(s.valor_nfe) ~ '^[+-]?\d{1,3}(\.\d{3})+,\d{1,2}$'
         THEN replace(replace(btrim(s.valor_nfe),'.',''),',','.')::numeric(15,2)
-
       WHEN btrim(s.valor_nfe) ~ '^[+-]?\d{1,3}(,\d{3})+\.\d{1,2}$'
         THEN replace(btrim(s.valor_nfe),',','')::numeric(15,2)
-
       WHEN btrim(s.valor_nfe) ~ '^[+-]?\d+,\d{1,2}$'
         THEN replace(btrim(s.valor_nfe),',','.')::numeric(15,2)
-
       WHEN btrim(s.valor_nfe) ~ '^[+-]?\d+\.\d{1,2}$'
         THEN btrim(s.valor_nfe)::numeric(15,2)
-
       WHEN btrim(s.valor_nfe) ~ '^[+-]?\d{1,3}(\.\d{3})+$'
         THEN replace(btrim(s.valor_nfe),'.','')::numeric(15,2)
-
       WHEN btrim(s.valor_nfe) ~ '^[+-]?\d{1,3}(,\d{3})+$'
         THEN replace(btrim(s.valor_nfe),',','')::numeric(15,2)
-
       WHEN btrim(s.valor_nfe) ~ '^[+-]?\d+$'
         THEN btrim(s.valor_nfe)::numeric(15,2)
-
-      ELSE CAST(
-             replace(
-               replace(regexp_replace(s.valor_nfe,'[^0-9,.-]','','g'),'.',''),
-               ',', '.'
-             ) AS numeric(15,2)
-           )
+      ELSE CAST(replace(replace(regexp_replace(s.valor_nfe,'[^0-9,.-]','','g'),'.',''),',','.') AS numeric(15,2))
     END                                               AS valor_nfe,
 
-    NULLIF(regexp_replace(s.qtd_volumes,'\D','','g'),'')::int AS qtd_volumes,
+    -- peso (corrigido)
     CASE
-      WHEN s.peso IS NULL OR btrim(s.peso)='' THEN NULL
+      WHEN s.peso IS NULL OR btrim(s.peso) = '' THEN NULL
+      WHEN btrim(s.peso) ~ '^[+-]?\d{1,3}(\.\d{3})+,\d{1,3}$'
+        THEN replace(replace(btrim(s.peso),'.',''),',','.')::numeric(12,3)
+      WHEN btrim(s.peso) ~ '^[+-]?\d{1,3}(,\d{3})+\.\d{1,3}$'
+        THEN replace(btrim(s.peso),',','')::numeric(12,3)
+      WHEN btrim(s.peso) ~ '^[+-]?\d+,\d{1,3}$'
+        THEN replace(btrim(s.peso),',','.')::numeric(12,3)
+      WHEN btrim(s.peso) ~ '^[+-]?\d+\.\d{1,3}$'
+        THEN btrim(s.peso)::numeric(12,3)
+      WHEN btrim(s.peso) ~ '^[+-]?\d{1,3}(\.\d{3})+$'
+        THEN replace(btrim(s.peso),'.','')::numeric(12,3)
+      WHEN btrim(s.peso) ~ '^[+-]?\d{1,3}(,\d{3})+$'
+        THEN replace(btrim(s.peso),',','')::numeric(12,3)
+      WHEN btrim(s.peso) ~ '^[+-]?\d+$'
+        THEN btrim(s.peso)::numeric(12,3)
       ELSE CAST(replace(replace(regexp_replace(s.peso,'[^0-9,.-]','','g'),'.',''),',','.') AS numeric(12,3))
     END                                               AS peso,
+
+    NULLIF(regexp_replace(s.qtd_volumes,'\D','','g'),'')::int AS qtd_volumes,
     NULLIF(regexp_replace(s.cod_cd,'\D','','g'),'')::int AS cod_cd,
 
-    /* ---- textos ---- */
+    /* ---- TEXTOS ---- */
     NULLIF(TRIM(s.serie_nfe),'')                      AS serie_nfe,
     NULLIF(TRIM(s.numero_nfe),'')                     AS numero_nfe,
     NULLIF(TRIM(s.remessa),'')                        AS remessa,
@@ -179,16 +158,11 @@ WITH src AS (
     NULLIF(TRIM(s.tipo_operacao),'')                  AS tipo_operacao,
     NULLIF(TRIM(s.arquivo_origem),'')                 AS arquivo_origem,
 
-    /* ---- controle de carga ---- */
+    /* ---- CONTROLE ---- */
     COALESCE(
       CASE
         WHEN btrim(s.data_insercao) ~ '^\d{2}/\d{2}/\d{4}( \d{2}:\d{2}:\d{2})?$'
-          THEN to_timestamp(
-                 CASE WHEN position(' ' in btrim(s.data_insercao))>0
-                      THEN btrim(s.data_insercao)
-                      ELSE btrim(s.data_insercao)||' 00:00:00' END,
-                 'DD/MM/YYYY HH24:MI:SS'
-               )
+          THEN to_timestamp(CASE WHEN position(' ' in btrim(s.data_insercao))>0 THEN btrim(s.data_insercao) ELSE btrim(s.data_insercao)||' 00:00:00' END,'DD/MM/YYYY HH24:MI:SS')
         WHEN btrim(s.data_insercao) ~ '^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2})?)?$'
           THEN to_timestamp(replace(btrim(s.data_insercao),'T',' '),'YYYY-MM-DD HH24:MI:SS')
         ELSE NULL END,
