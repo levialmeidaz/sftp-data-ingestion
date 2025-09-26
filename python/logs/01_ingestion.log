@@ -1,0 +1,9 @@
+2025-09-25 20:55:16,986 | INFO | InÌcio da ingest„o SFTP
+2025-09-25 20:55:16,991 | INFO | Arquivos locais existentes: 249
+2025-09-25 20:55:16,993 | ERROR | Erro de conex„o ou listagem: str, bytes or bytearray expected, not NoneType
+2025-09-25 20:56:10,173 | INFO | InÌcio da ingest„o SFTP
+2025-09-25 20:56:10,179 | INFO | Arquivos locais existentes: 249
+2025-09-25 20:56:10,180 | ERROR | Erro de conex„o ou listagem: str, bytes or bytearray expected, not NoneType
+2025-09-25 20:56:51,664 | INFO | In√≠cio da ingest√£o SFTP
+2025-09-25 20:56:51,668 | INFO | Arquivos locais existentes: 249
+2025-09-25 20:56:51,672 | ERROR | Erro de conex√£o ou listagem: str, bytes or bytearray expected, not NoneType
