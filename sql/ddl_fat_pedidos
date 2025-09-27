@@ -1,62 +1,43 @@
 CREATE TABLE dw.fat_pedidos (
-  -- chaves
-  sk_pedido         BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  chave_nfe         CHAR(44) NOT NULL CHECK (chave_nfe ~ '^[0-9]{44}$'),
-  pedido            TEXT NOT NULL,
-
-  -- datas
-  data_insercao     TIMESTAMPTZ NOT NULL DEFAULT now(),   -- evento de carga
-  data_nfe          DATE,
-  data_prev_entrega DATE,
-  data_prev_entrega_original DATE,
-  data_ultima_ocr   TIMESTAMPTZ,                          -- evento real
-  chegada_transportadora TIMESTAMPTZ,
-
-  -- números e valores
-  serie_nfe         VARCHAR(10),
-  numero_nfe        BIGINT,
-  valor_nfe         NUMERIC(15,2),
-  qtd_volumes       INTEGER CHECK (qtd_volumes >= 0),
-  qtd_itens         INTEGER CHECK (qtd_itens >= 0),
-  peso              NUMERIC(12,3) CHECK (peso >= 0),
-
-  -- localização e CEP (ver nota abaixo)
-  cep_num           INTEGER,                               -- para comparações por faixa
-  cep_texto         CHAR(8),                               -- para manter zeros à esquerda
-  uf                CHAR(2) CHECK (uf ~ '^[A-Z]{2}$'),
-  cidades           TEXT,
-  endereco          TEXT,
-  numero            VARCHAR(10),
-  bairro            TEXT,
-  endereco_completo TEXT,
-
-  -- transporte
-  remessa           TEXT,
-  cnpj_cpf_transportadora CHAR(14),
-  transportador     TEXT,
-
-  -- ocorrências
-  id_ult_ocr        TEXT,
-  ultima_ocorrencia TEXT,
-  chave_ult_ocr     TEXT,
-
-  -- categóricos
-  tipo_entrega      TEXT,
-  status_prazo      TEXT,                                  -- era TIMESTAMP (incorreto)
-  grau_risco        TEXT,
-  tipo_operacao     TEXT,
-
-  -- demais
-  cod_cd            INTEGER,
-  cd                TEXT,
-  cod_vendedor      TEXT,
-  etiquetas         JSONB,                                 -- era TEXT
-  cpf_destinatario  CHAR(11),
-  agrupador         TEXT,
-  arquivo_origem    TEXT,
-  lead_time         TEXT
+    id VARCHAR(50),
+    data_insercao TIMESTAMP,
+    tipo_entrega VARCHAR(50),
+    pedido TEXT,
+    data_nfe DATE,
+    serie_nfe TEXT,
+    numero_nfe TEXT,
+    valor_nfe NUMERIC(15,2),
+    qtd_volumes INT,
+    peso NUMERIC(12,3),
+    remessa TEXT,
+    nome_destinatario TEXT,
+    endereco_completo TEXT,
+    cep VARCHAR(20),
+    cod_cd INT,
+    cd VARCHAR(50),
+    cnpj_cpf_transportadora TEXT,
+    transportador TEXT,
+    lead_time TEXT,
+    data_prev_entrega DATE,
+    status_prazo VARCHAR(50),
+    id_ult_ocr TEXT,
+    ultima_ocorrencia VARCHAR(255),
+    chave_ult_ocr TEXT,
+    data_ultima_ocr TIMESTAMP,
+    agrupador VARCHAR(100),
+    endereco VARCHAR(255),
+    numero VARCHAR(255),
+    bairro VARCHAR(255),
+    cidades VARCHAR(255),
+    uf TEXT,
+    etiquetas TEXT,
+    chegada_transportadora TIMESTAMP,
+    cod_vendedor TEXT,
+    chave_nfe TEXT,
+    qtd_itens TEXT,
+    data_prev_entrega_original DATE,
+    cpf_destinatario TEXT,
+    grau_risco VARCHAR(50),
+    tipo_operacao VARCHAR(50),
+    arquivo_origem VARCHAR(255)
 );
-
-CREATE UNIQUE INDEX IF NOT EXISTS ux_fat_pedidos_chave_nfe ON dw.fat_pedidos(chave_nfe);
-CREATE INDEX IF NOT EXISTS ix_fat_pedidos_data_ult_ocr ON dw.fat_pedidos(data_ultima_ocr);
-CREATE INDEX IF NOT EXISTS ix_fat_pedidos_cep_num ON dw.fat_pedidos(cep_num);
