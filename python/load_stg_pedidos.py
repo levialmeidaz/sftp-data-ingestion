@@ -14,7 +14,7 @@ from datetime import datetime
 DIR_NOVOS  = r"C:\Users\atend\OneDrive - grupojb.log.br\STORAGE_SFTP\rel_83\novos"
 DIR_LIDOS  = r"C:\Users\atend\OneDrive - grupojb.log.br\STORAGE_SFTP\rel_83\lidos"
 DIR_ERROS  = r"C:\Users\atend\OneDrive - grupojb.log.br\STORAGE_SFTP\rel_83\erros"
-TABELA_DESTINO = "stagging.stg_pedidos"
+TABELA_DESTINO = "staging.stg_pedidos"
 
 # Credenciais via .env (ex.: banco.env no mesmo diretório do script)
 load_dotenv("banco.env")

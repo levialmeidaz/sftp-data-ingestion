@@ -1,4 +1,4 @@
-CREATE TABLE stagging.stg_pedidos (
+CREATE TABLE staging.stg_pedidos (
     id VARCHAR(255),
     data_insercao VARCHAR(255),
     tipo_entrega VARCHAR(255),

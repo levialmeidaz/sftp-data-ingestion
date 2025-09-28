@@ -168,7 +168,7 @@ WITH src AS (
         ELSE NULL END,
       now()
     )                                                 AS data_insercao
-  FROM stagging.stg_pedidos s
+  FROM staging.stg_pedidos s
 ),
 ranked AS (
   SELECT s.*,
@@ -255,7 +255,7 @@ def run_upsert():
         password=os.getenv("PGPASSWORD"),
         dbname=os.getenv("PGDATABASE"),
         port=os.getenv("PGPORT"),
-        options="-c search_path=public,stagging,dw"
+        options="-c search_path=public,staging,dw"
     )
     try:
         with conn, conn.cursor() as cur:

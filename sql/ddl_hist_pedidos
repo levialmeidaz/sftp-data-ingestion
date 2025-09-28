@@ -1,0 +1,58 @@
+-- 1) Schema
+
+CREATE SCHEMA IF NOT EXISTS hist;
+
+-- 2) Tabela de histórico
+CREATE TABLE IF NOT EXISTS hist.archive_pedidos (
+  hist_id        bigserial PRIMARY KEY,        -- PK técnica
+  processed_ts   timestamptz NOT NULL DEFAULT now(),
+  batch_id       uuid        NOT NULL,
+
+  -- mesmas colunas da staging
+  id VARCHAR(255),
+  data_insercao VARCHAR(255),
+  tipo_entrega VARCHAR(255),
+  pedido VARCHAR(255),
+  data_nfe VARCHAR(255),
+  serie_nfe VARCHAR(255),
+  numero_nfe VARCHAR(255),
+  valor_nfe VARCHAR(255),
+  qtd_volumes VARCHAR(255),
+  peso VARCHAR(255),
+  remessa VARCHAR(255),
+  nome_destinatario VARCHAR(255),
+  endereco_completo VARCHAR(255),
+  cep VARCHAR(255),
+  cod_cd VARCHAR(255),
+  cd VARCHAR(255),
+  cnpj_cpf_transportadora VARCHAR(255),
+  transportador VARCHAR(255),
+  lead_time VARCHAR(255),
+  data_prev_entrega VARCHAR(255),
+  status_prazo VARCHAR(255),
+  id_ult_ocr VARCHAR(255),
+  ultima_ocorrencia VARCHAR(255),
+  chave_ult_ocr VARCHAR(255),
+  data_ultima_ocr VARCHAR(255),
+  agrupador VARCHAR(255),
+  endereco VARCHAR(255),
+  numero VARCHAR(255),
+  bairro VARCHAR(255),
+  cidades VARCHAR(255),
+  uf VARCHAR(255),
+  etiquetas VARCHAR(255),
+  chegada_transportadora VARCHAR(255),
+  cod_vendedor VARCHAR(255),
+  chave_nfe VARCHAR(255),
+  qtd_itens VARCHAR(255),
+  data_prev_entrega_original VARCHAR(255),
+  cpf_destinatario VARCHAR(255),
+  grau_risco VARCHAR(255),
+  tipo_operacao VARCHAR(255),
+  arquivo_origem VARCHAR(255)
+);
+
+-- 3) Índices úteis
+CREATE INDEX IF NOT EXISTS ix_hist_pedidos_chave_nfe   ON hist.archive_pedidos (chave_nfe);
+CREATE INDEX IF NOT EXISTS ix_hist_pedidos_processed   ON hist.archive_pedidos (processed_ts DESC);
+CREATE INDEX IF NOT EXISTS ix_hist_pedidos_batch       ON hist.archive_pedidos (batch_id);

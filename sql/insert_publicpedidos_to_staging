@@ -9,7 +9,7 @@ BEGIN
   FOR r IN
     SELECT column_name
     FROM information_schema.columns
-    WHERE table_schema = 'stagging'
+    WHERE table_schema = 'staging'
       AND table_name  = 'stg_pedidos'
     ORDER BY ordinal_position
   LOOP
@@ -41,6 +41,6 @@ BEGIN
   END LOOP;
 
   EXECUTE
-    'INSERT INTO stagging.stg_pedidos ('||cols_insert||') '||
+    'INSERT INTO staging.stg_pedidos ('||cols_insert||') '||
     'SELECT '||cols_select||' FROM public.pedidos p;';
 END $$;
