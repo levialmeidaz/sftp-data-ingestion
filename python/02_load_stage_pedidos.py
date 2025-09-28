@@ -19,11 +19,11 @@ TABELA_DESTINO = "staging.stg_pedidos"
 # Credenciais via .env (ex.: banco.env no mesmo diretório do script)
 load_dotenv("banco.env")
 DB_CFG = {
-    "host": os.getenv("PGHOST", "localhost"),
-    "user": os.getenv("PGUSER", "postgres"),
-    "password": os.getenv("PGPASSWORD", "admin"),
-    "dbname": os.getenv("PGDATABASE", "banco_prod"),
-    "port": int(os.getenv("PGPORT", "5432")),
+    "host": os.getenv("PGHOST"),
+    "user": os.getenv("PGUSER"),
+    "password": os.getenv("PGPASSWORD"),
+    "dbname": os.getenv("PGDATABASE"),
+    "port": os.getenv("PGPORT"),
 }
 
 COLUNAS_DESTINO = [
