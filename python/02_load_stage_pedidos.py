@@ -17,13 +17,23 @@ DIR_ERROS  = r"C:\Users\atend\OneDrive - grupojb.log.br\STORAGE_SFTP\rel_83\erro
 TABELA_DESTINO = "staging.stg_pedidos"
 
 # Credenciais via .env (ex.: banco.env no mesmo diretório do script)
-load_dotenv("banco.env")
+# Carrega .env a partir do diretório do script, não do CWD
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ENV_PATH = os.path.join(BASE_DIR, "banco.env")
+load_dotenv(ENV_PATH)
+
+def _req(key: str) -> str:
+    v = os.getenv(key)
+    if not v:
+        raise RuntimeError(f"Variável de ambiente ausente: {key}. Verifique {ENV_PATH}")
+    return v
+
 DB_CFG = {
-    "host": os.getenv("PGHOST"),
-    "user": os.getenv("PGUSER"),
-    "password": os.getenv("PGPASSWORD"),
-    "dbname": os.getenv("PGDATABASE"),
-    "port": os.getenv("PGPORT"),
+    "host": os.getenv("PGHOST", "localhost"),
+    "user": os.getenv("PGUSER", "postgres"),
+    "password": os.getenv("PGPASSWORD", "admin"),
+    "dbname": os.getenv("PGDATABASE", "banco_prod"),
+    "port": int(os.getenv("PGPORT", "5432")),
 }
 
 COLUNAS_DESTINO = [
