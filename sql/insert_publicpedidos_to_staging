@@ -1,42 +1,42 @@
--- Execute dentro de uma transação se desejar (BEGIN; ... COMMIT;)
 DO $$
 DECLARE
   r   record;
   cols_insert  text := '';
   cols_select  text := '';
 BEGIN
-  -- Varre as colunas da tabela de staging na ordem correta
   FOR r IN
-    SELECT column_name
-    FROM information_schema.columns
-    WHERE table_schema = 'staging'
-      AND table_name  = 'stg_pedidos'
-    ORDER BY ordinal_position
+    SELECT s.column_name,
+           p.data_type AS src_type
+    FROM information_schema.columns s
+    LEFT JOIN information_schema.columns p
+      ON p.table_schema='public' AND p.table_name='pedidos' AND p.column_name=s.column_name
+    WHERE s.table_schema='staging' AND s.table_name='stg_pedidos'
+    ORDER BY s.ordinal_position
   LOOP
     cols_insert := cols_insert || CASE WHEN cols_insert <> '' THEN ', ' ELSE '' END
                   || quote_ident(r.column_name);
 
     cols_select := cols_select || CASE WHEN cols_select <> '' THEN ', ' ELSE '' END ||
       CASE r.column_name
-        -- Regras específicas
-        WHEN 'tipo_operacao'             THEN '''0''::text AS '||quote_ident(r.column_name)
-        WHEN 'arquivo_origem'            THEN '''arquivo_backup_banco''::text AS '||quote_ident(r.column_name)
-        WHEN 'data_prev_entrega'         THEN 'p.data_prev_entrega::text AS '||quote_ident(r.column_name)
-        WHEN 'data_prev_entrega_original'THEN 'p.data_prev_entrega::text AS '||quote_ident(r.column_name)
-        WHEN 'cnpj_cpf_transportadora'   THEN 'p.cnpj_cpf_dest::text AS '||quote_ident(r.column_name)
-        WHEN 'chegada_transportadora'    THEN 'p.chegada_na_transportadora::text AS '||quote_ident(r.column_name)
-        WHEN 'grau_risco'                THEN 'p.grau_de_risco::text AS '||quote_ident(r.column_name)
-        -- 1:1: se a coluna existir em public.pedidos, copia e CAST pra text
-        ELSE CASE
-          WHEN EXISTS (
-            SELECT 1 FROM information_schema.columns c
-            WHERE c.table_schema='public' AND c.table_name='pedidos'
-              AND c.column_name = r.column_name
-          )
-          THEN 'p.'||quote_ident(r.column_name)||'::text AS '||quote_ident(r.column_name)
-          -- Se só existe na staging e não há regra, preenche NULL::text
-          ELSE 'NULL::text AS '||quote_ident(r.column_name)
-        END
+        WHEN 'tipo_operacao'               THEN '''0''::text AS '||quote_ident(r.column_name)
+        WHEN 'arquivo_origem'              THEN '''arquivo_backup_banco''::text AS '||quote_ident(r.column_name)
+        WHEN 'data_prev_entrega'           THEN 'to_char(p.data_prev_entrega,''DD/MM/YYYY HH24:MI:SS'') AS '||quote_ident(r.column_name)
+        WHEN 'data_prev_entrega_original'  THEN 'to_char(p.data_prev_entrega,''DD/MM/YYYY HH24:MI:SS'') AS '||quote_ident(r.column_name)
+        WHEN 'cnpj_cpf_transportadora'     THEN 'p.cnpj_cpf_dest::text AS '||quote_ident(r.column_name)
+        WHEN 'chegada_transportadora'      THEN 'to_char(p.chegada_na_transportadora,''DD/MM/YYYY HH24:MI:SS'') AS '||quote_ident(r.column_name)
+        WHEN 'grau_risco'                  THEN 'p.grau_de_risco::text AS '||quote_ident(r.column_name)
+        ELSE
+          CASE
+            WHEN r.src_type IS NULL THEN 'NULL::text AS '||quote_ident(r.column_name)
+            WHEN r.src_type IN ('timestamp without time zone','timestamp with time zone')
+              THEN 'to_char(p.'||quote_ident(r.column_name)||',''DD/MM/YYYY HH24:MI:SS'') AS '||quote_ident(r.column_name)
+            WHEN r.src_type='date'
+              THEN 'to_char(p.'||quote_ident(r.column_name)||',''DD/MM/YYYY'') AS '||quote_ident(r.column_name)
+            WHEN r.src_type LIKE 'time%'
+              THEN 'to_char(p.'||quote_ident(r.column_name)||',''HH24:MI:SS'') AS '||quote_ident(r.column_name)
+            ELSE
+              'p.'||quote_ident(r.column_name)||'::text AS '||quote_ident(r.column_name)
+          END
       END;
   END LOOP;
 
